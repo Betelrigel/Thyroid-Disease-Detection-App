@@ -9,6 +9,4 @@ Web App: Streamlit interface for real-time predictions.
 Install dependencies: pip install -r requirements.txt.
 Run the app: streamlit run app.py.
 
-#### References
-Scikit-learn
-Streamlit
+

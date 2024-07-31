@@ -21,6 +21,48 @@ def predict_thyroid(features):
 
 # Streamlit app
 st.title("Thyroid Disease Prediction")
+st.markdown("""
+<style>
+    .title-style {
+        font-size:24px;
+        font-weight:bold;
+        color:#004080;
+    }
+    .header-style {
+        font-size:20px;
+        font-weight:bold;
+        color:#004080;
+    }
+    .normal-text {
+        font-size:16px;
+        font-weight:normal;
+        color:#004080;
+    }
+    .highlight-text {
+        font-size:16px;
+        font-weight:bold;
+        color:#000000; /* Black for better readability */
+    }
+    .table-style {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+    }
+    .table-style th, .table-style td {
+        border: 1px solid #004080;
+        padding: 10px;
+        text-align: left;
+        vertical-align: top;
+    }
+    .table-style th {
+        background-color: #004080;
+        color: white;
+    }
+    .table-style tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 st.sidebar.header('Patient Data')
 
@@ -97,6 +139,63 @@ input_df = user_input_features()
 st.subheader('User Input Features')
 st.write(input_df)
 
+# Add a section for normal levels and implications of abnormal levels
+st.subheader('Thyroid Test Information')
+
+# Define normal levels and implications
+normal_levels = {
+    "TSH": "0.5 - 5.0 mIU/L",
+    "Free T4 (Thyroxine)": "0.7 - 1.9 ng/dL",
+    "Total T4": "5.0 - 12.0 µg/dL",
+    "Total T3": "80 - 220 ng/dL"
+}
+implications = {
+    "High TSH": "Possible hypothyroidism.",
+    "Low TSH": "Possible hyperthyroidism.",
+    "Low Free T4": "Possible hypothyroidism.",
+    "High Free T4": "Possible hyperthyroidism.",
+    "Low Total T4": "Possible hypothyroidism",
+    "High Total T4": "Possible hyperthyroidism",
+    "High Total T3": "Possible hyperthyroidism."
+}
+
+# Create a DataFrame for display
+thyroid_info = pd.DataFrame({
+    "Thyroid Test": ["TSH", "Free T4 (Thyroxine)", "Total T4", "Total T3"],
+    "Normal Range": [normal_levels["TSH"], normal_levels["Free T4 (Thyroxine)"], normal_levels["Total T4"], normal_levels["Total T3"]],
+    "Implications of Abnormal Levels": [
+        f"High TSH: <span class='highlight-text'>{implications['High TSH']}</span><br>Low TSH: <span class='highlight-text'>{implications['Low TSH']}</span>",
+        f"Low Free T4: <span class='highlight-text'>{implications['Low Free T4']}</span><br>High Free T4: <span class='highlight-text'>{implications['High Free T4']}</span>",
+        f"Low Total T4: <span class='highlight-text'>{implications['Low Total T4']}</span><br>High Total T4: <span class='highlight-text'>{implications['High Total T4']}</span>",
+        f"High Total T3: <span class='highlight-text'>{implications['High Total T3']}</span>"
+    ]
+})
+
+# Display table with custom styling
+st.markdown("""
+<div class="table-style">
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 33%;">Thyroid Test</th>
+                <th style="width: 33%;">Normal Range</th>
+                <th style="width: 33%;">Implications of Abnormal Levels</th>
+            </tr>
+        </thead>
+        <tbody>
+""", unsafe_allow_html=True)
+
+for index, row in thyroid_info.iterrows():
+    st.markdown(f"""
+        <tr>
+            <td style="width: 33%;">{row['Thyroid Test']}</td>
+            <td style="width: 33%;">{row['Normal Range']}</td>
+            <td style="width: 33%;">{row['Implications of Abnormal Levels']}</td>
+        </tr>
+    """, unsafe_allow_html=True)
+
+st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+
 # Make a prediction and display the result
 if st.button('Predict'):
     prediction = predict_thyroid(input_df.values[0])
@@ -105,3 +204,9 @@ if st.button('Predict'):
             st.subheader('Prediction: Positive for Thyroid Disease')
         else:
             st.subheader('Prediction: Negative for Thyroid Disease')
+
+st.markdown("""
+<div class="normal-text">
+    Note: Please consult with a healthcare professional for accurate diagnosis and treatment.
+</div>
+""", unsafe_allow_html=True)
